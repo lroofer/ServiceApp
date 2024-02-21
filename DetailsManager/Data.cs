@@ -3,7 +3,6 @@ namespace DetailsManager;
 public struct Data 
 {
     public List<Widget> Details;
-    public List<Specification> Specifications;
     public AutoSaver AutoSaver;
     public string FileName;
 
@@ -11,7 +10,6 @@ public struct Data
     {
         FileName = fileName;
         Details = new List<Widget>();
-        Specifications = new List<Specification>();
         AutoSaver = new AutoSaver();
     }
 }
