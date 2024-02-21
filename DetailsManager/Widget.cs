@@ -11,7 +11,7 @@ public class Widget
     private double _price;
     private bool _isAvailable;
     private string _manufactureDate;
-    private Specification[] _specifications;
+    private readonly List<Specification> _specifications;
 
     public string WidgetId => _widgetId;
     public string Name
@@ -103,26 +103,16 @@ public class Widget
         }   
     }
 
-    public Specification[] Specifications
+    public List<Specification> Specifications
     {
         get => _specifications;
-        set
-        {
-            if (value.Length == 0) throw new ArgumentException("An array of specifications can't be empty");
-            _specifications = value;
-            foreach (var u in _specifications)
-            {
-                u.Updated += PriceUpdate;
-            }
-            OnUpdated();
-        }
     }
     
     public event EventHandler<EventArgs>? Updated;
     
     public string ToJSON() => JsonSerializer.Serialize(this);
     
-    public Widget(string widgetId, string name, int quantity, double price, bool isAvailable, string manufactureDate, Specification[] specifications)
+    public Widget(string widgetId, string name, int quantity, double price, bool isAvailable, string manufactureDate, List<Specification> specifications)
     {
         _widgetId = widgetId;
         _name = name;
@@ -133,9 +123,25 @@ public class Widget
         _specifications = specifications;
     }
 
+    void AddSpecification(Specification specification)
+    {
+        _specifications.Add(specification);
+        _price += specification.SpecPrice;
+        specification.Updated += PriceUpdate;
+    }
+
+    void RemoveSpecification(int index)
+    {
+        if (index >= _specifications.Count)
+            throw new ArgumentOutOfRangeException(nameof(index));
+        _price -= _specifications[index].SpecPrice;
+        _specifications[index].Updated -= PriceUpdate;
+        _specifications.RemoveAt(index);
+    }
     void PriceUpdate(object? sender, UpdateArgs e)
     {
         _price += e.Delta ?? 0;
+        OnUpdated();
     }
     protected virtual void OnUpdated()
     {
