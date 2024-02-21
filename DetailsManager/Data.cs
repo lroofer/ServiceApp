@@ -1,15 +1,15 @@
 namespace DetailsManager;
 
-public struct Data 
+public class Data
 {
-    public List<Widget> Details;
+    public WidgetList WidgetList;
     public AutoSaver AutoSaver;
     public string FileName;
 
     public Data(string fileName)
     {
+        WidgetList = new WidgetList();
         FileName = fileName;
-        Details = new List<Widget>();
         AutoSaver = new AutoSaver();
     }
 }

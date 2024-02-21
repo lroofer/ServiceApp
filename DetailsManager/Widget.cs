@@ -13,6 +13,8 @@ public class Widget
     private string _manufactureDate;
     private readonly List<Specification> _specifications;
 
+    public static event EventHandler<UpdateArgs>? Updated;
+
     public string WidgetId => _widgetId;
     public string Name
     {
@@ -108,8 +110,6 @@ public class Widget
         get => _specifications;
     }
     
-    public event EventHandler<EventArgs>? Updated;
-    
     public string ToJSON() => JsonSerializer.Serialize(this);
     
     public Widget(string widgetId, string name, int quantity, double price, bool isAvailable, string manufactureDate, List<Specification> specifications)
@@ -123,22 +123,22 @@ public class Widget
         _specifications = specifications;
     }
 
-    void AddSpecification(Specification specification)
+    public void AddSpecification(Specification specification)
     {
         _specifications.Add(specification);
         _price += specification.SpecPrice;
-        specification.Updated += PriceUpdate;
+        specification.PriceUpdated += PriceUpdate;
     }
 
-    void RemoveSpecification(int index)
+    public void RemoveSpecification(int index)
     {
         if (index >= _specifications.Count)
             throw new ArgumentOutOfRangeException(nameof(index));
         _price -= _specifications[index].SpecPrice;
-        _specifications[index].Updated -= PriceUpdate;
+        _specifications[index].PriceUpdated -= PriceUpdate;
         _specifications.RemoveAt(index);
     }
-    void PriceUpdate(object? sender, UpdateArgs e)
+    void PriceUpdate(object? sender, PriceUpdateArgs e)
     {
         _price += e.Delta ?? 0;
         OnUpdated();
