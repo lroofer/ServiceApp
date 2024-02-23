@@ -34,7 +34,7 @@ public class Menu
             Console.ForegroundColor = i == _selectedOption ? BackgroundColor : ForegroundColor;
             Console.BackgroundColor = i == _selectedOption ? ForegroundColor : BackgroundColor;
             _optionLocations[i] = Console.GetCursorPosition().Top;
-            Console.WriteLine($"<{(i == _selectedOption ? '*' : ' ')}> {_options[i]}");
+            Console.WriteLine($"<{(i == _selectedOption ? '*' : '-')}> {_options[i]}");
         }
     }
 

@@ -14,7 +14,9 @@ public class Widget
     private readonly List<Specification> _specifications;
 
     public static event EventHandler<UpdateArgs>? Updated;
-
+    public static readonly string[] WidgetProperties = { "widgetId", "name", "quantity", "price", "isAvailable", "manufactureDate" };
+    public override string ToString() => $"{Name} ({Quantity}) -> {Math.Round(Price, 2)}$: {WidgetId}";
+    
     [JsonPropertyName("widgetId")]
     public string WidgetId { get; }
     
@@ -110,12 +112,9 @@ public class Widget
     }
 
     [JsonPropertyName("specifications")]
-    public List<Specification> Specifications
-    {
-        get => _specifications;
-    }
-    
-    public string ToJSON() => JsonSerializer.Serialize(this);
+    public List<Specification> Specifications => _specifications;
+
+    public string ToJson() => JsonSerializer.Serialize(this);
     
     public Widget(string widgetId, string name, int quantity, double price, bool isAvailable, string manufactureDate, List<Specification> specifications)
     {
