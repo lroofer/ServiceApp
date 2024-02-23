@@ -1,11 +1,11 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace DetailsManager;
 
 public class Widget
 {
     private const string DtfFormat = "YYYY-MM-DDThh:mm:ss.mls";
-    private readonly string _widgetId;
     private string _name;
     private int _quantity;
     private double _price;
@@ -15,7 +15,10 @@ public class Widget
 
     public static event EventHandler<UpdateArgs>? Updated;
 
-    public string WidgetId => _widgetId;
+    [JsonPropertyName("widgetId")]
+    public string WidgetId { get; }
+    
+    [JsonPropertyName("name")]
     public string Name
     {
         get => _name;
@@ -30,6 +33,7 @@ public class Widget
         }
     }
 
+    [JsonPropertyName("quantity")]
     public int Quantity
     {
         get => _quantity;
@@ -43,12 +47,11 @@ public class Widget
             else throw new ArgumentException("Quantity can't be negative.");
         }
     }
+    
+    [JsonPropertyName("price")]
+    public double Price => _price;
 
-    public double Price
-    {
-        get => _price;
-    }
-
+    [JsonPropertyName("isAvailable")]
     public bool IsAvailable
     {
         get => _isAvailable;
@@ -59,6 +62,7 @@ public class Widget
         }
     }
 
+    [JsonPropertyName("manufactureDate")]
     public string ManufactureDate
     {
         get => _manufactureDate;
@@ -105,6 +109,7 @@ public class Widget
         }   
     }
 
+    [JsonPropertyName("specifications")]
     public List<Specification> Specifications
     {
         get => _specifications;
@@ -114,7 +119,7 @@ public class Widget
     
     public Widget(string widgetId, string name, int quantity, double price, bool isAvailable, string manufactureDate, List<Specification> specifications)
     {
-        _widgetId = widgetId;
+        WidgetId = widgetId;
         _name = name;
         _quantity = quantity;
         _price = price;

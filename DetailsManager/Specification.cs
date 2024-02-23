@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace DetailsManager;
 
@@ -9,6 +10,7 @@ public class Specification
     private bool _isCustom;
     public event EventHandler<PriceUpdateArgs>? PriceUpdated;
     public static event EventHandler<UpdateArgs>? Updated; 
+    [JsonPropertyName("specName")]
     public string SpecName
     {
         get => _specName;
@@ -21,6 +23,7 @@ public class Specification
         }
     }
 
+    [JsonPropertyName("specPrice")]
     public double SpecPrice
     {
         get => _specPrice;
@@ -35,6 +38,7 @@ public class Specification
         }
     }
 
+    [JsonPropertyName("isCustom")]
     public bool IsCustom
     {
         get => _isCustom;

@@ -90,7 +90,7 @@ internal static class Program
             {
                 // MARK: File manager logic here.
             }
-
+            
             Header("Press Q to quit the app or any other key to continue...");
         } while (Console.ReadKey(true).Key != ConsoleKey.Q);
     }
