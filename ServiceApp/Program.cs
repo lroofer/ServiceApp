@@ -16,55 +16,42 @@ internal static class Program
         }, "[DetailsManager]");
         return menu.Run();
     }
-
-    static async Task<List<Widget>?> ReadFromFile(string path)
+    
+    static async Task<(bool, string)> ProcessFile(string path)
     {
-        await using var openStream = File.OpenRead(path);
-        var widgets = await JsonSerializer.DeserializeAsync<List<Widget>>(openStream);
-        return widgets;
-    }
-
-    static bool ProcessFile(string path)
-    {
+        string? tempFileName;
         try
         {
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-            var task = ReadFromFile(path);
-            long lastTrack = 0;
-            while (!task.IsCompleted)
+            if (Path.GetExtension(path) != ".json")
             {
-                if (stopwatch.ElapsedMilliseconds % 500 != 0 || lastTrack >= stopwatch.ElapsedMilliseconds)
-                    continue;
-                Console.Clear();
-                Success($"Reading file: {stopwatch.ElapsedMilliseconds} mls");
-                lastTrack = stopwatch.ElapsedMilliseconds;
+                return (false, "Your file must have json extension");
             }
-            
-            Manager.Widgets = task.Result;
+
+            tempFileName = Path.GetFileNameWithoutExtension(path) + "_tmp.json";
+            await using var openStream = File.OpenRead(path);
+            Manager.Widgets = await JsonSerializer.DeserializeAsync<List<Widget>>(openStream);
         }
         catch (Exception e)
         {
-            Warning($"Can't read data from your file. Error: {e.Message}");
-            Warning("Press any key to try again");
-            return false;
+            var msg = $"Can't read data from your file. Error: {e.Message}\nPress any key to try again";
+            return (false, msg);
         }
 
         if (Manager.Widgets == null)
         {
-            Warning($"Data in the file wasn't decoded.");
-            Warning("Press any key to try again");
-            return false;
+            const string msg = $"Data in the file wasn't decoded. Press any key to try again";
+            return (false, msg);
         }
-
-        Manager.FileName = path;
-        return true;
+        
+        Manager.AutoSaver = new AutoSaver();
+        Manager.PathFile = path;
+        Manager.TempFileName = tempFileName;
+        return (true, "Done");
     }
     
     static void Main()
     {
         Console.CursorVisible = false;
-        List<Widget>? widgets;
         do
         {
             var value = SelectMethodMenu();
@@ -80,13 +67,30 @@ internal static class Program
                         Warning("The input was interrupted by another process. Press any key to try again");
                         continue;
                     }
-
-                    if (!ProcessFile(path)) continue;
-                    break;
+                    
+                    var stopwatch = new Stopwatch();
+                    stopwatch.Start();
+                    var task = ProcessFile(path);
+                    long lastTrack = 0;
+                    while (!task.IsCompleted)
+                    {
+                        if (stopwatch.ElapsedMilliseconds % 500 != 0 || lastTrack >= stopwatch.ElapsedMilliseconds)
+                            continue;
+                        Console.Clear();
+                        Success($"Processing file: {stopwatch.ElapsedMilliseconds} mls");
+                        lastTrack = stopwatch.ElapsedMilliseconds;
+                    }
+                    if (task.Result.Item1) break;
+                    Warning(task.Result.Item2);
                 } while (Console.ReadKey(true).KeyChar >= 0);
 
                 Console.CursorVisible = false;
             }
+            else
+            {
+                // MARK: File manager logic here.
+            }
+
             Header("Press Q to quit the app or any other key to continue...");
         } while (Console.ReadKey(true).Key != ConsoleKey.Q);
     }
