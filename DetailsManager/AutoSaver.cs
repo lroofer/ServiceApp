@@ -9,8 +9,8 @@ public class AutoSaver
         var diff = (e.TimeReached - DateTime.Now).TotalSeconds;
         if (diff >= 15)
         {
-            var jsonValue = Manager.Data?.WidgetList.ToJSON() ?? "{}";
-            var fileName = $"{Manager.Data?.FileName ?? ""}_tmp.json";
+            //var jsonValue = Manager.Widgets? ?? "{}";
+            //var fileName = $"{Manager.Data?.FileName ?? ""}_tmp.json";
         }
     }
     public AutoSaver()
