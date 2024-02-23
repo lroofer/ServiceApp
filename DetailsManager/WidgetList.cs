@@ -4,22 +4,22 @@ namespace DetailsManager;
 
 public class WidgetList
 {
-    public List<Widget> list;
+    public List<Widget> List { get; }
 
     public Widget this[int index]
     {
-        get => list[index];
-        set => list[index] = value;
+        get => List[index];
+        set => List[index] = value;
     }
 
     public WidgetList()
     {
-        list = new();
+        List = new();
     }
 
     public WidgetList(List<Widget> widgets)
     {
-        list = widgets;
+        List = widgets;
     }
     public string ToJSON()
     {

@@ -1,11 +1,26 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using static DetailsManager.Markup;
 
-using DetailsManager;
+namespace ServiceApp;
 
-Console.WriteLine("Hello, World!");
-var widget = new Widget("oklohoma", "Robot", 12, 13131.1313, true, "2020-12-17T12:30:33.13113", new List<Specification>());
-var specification = new Specification("Natural", 13.31, true);
-widget.AddSpecification(specification);
-var widgets = new List<Widget> { widget };
-var lst = new WidgetList(widgets);
-Console.WriteLine(lst.ToJSON());
+internal static class Program
+{
+    static async Task<int> SelectMenuAsync()
+    {
+        var menu = new Menu(new []
+        {
+            "Enter an absolute path to the file [recommended]",
+            "Use FileManager to select a file"
+        }, "[DetailsManager]");
+        return await Task.Run(() => menu.Run());
+    } 
+    static void Main()
+    {
+        Console.CursorVisible = false;
+        do
+        {
+            var value = SelectMenuAsync().Result;
+            Console.WriteLine(value);
+            Header("Press Q to quit the app or any other key to continue...");
+        } while (Console.ReadKey(true).Key != ConsoleKey.Q);
+    }
+}
