@@ -12,12 +12,7 @@ public class ArrayElement: View<Specification>, IOption
     }
 
     public bool IsMutable()
-        => false;
-
-    public void SetValue(string value)
-    {
-        throw new NotImplementedException();
-    }
+        => true;
 
     public string GetTag()
         => _tag;

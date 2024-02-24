@@ -179,9 +179,20 @@ public class Widget : IDisplayable
     {
         switch (val.GetTag())
         {
-            
+            case "name":
+                Name = (val as StringElement)?.Value ?? throw new InvalidOperationException();
+                break;
+            case "quantity":
+                Quantity = (val as IntElement)?.Value ?? throw new InvalidOperationException();
+                break;
+            case "isAvailable":
+                IsAvailable = (val as BoolElement)?.Value ?? throw new InvalidOperationException();
+                break;
+            case "manufactureDate":
+                ManufactureDate = (val as StringElement)?.Value ?? throw new InvalidOperationException();
+                break;
+            default:
+                throw new ArgumentException("The object wasn't found");
         }
-
-        throw new NotImplementedException();
     }
 }

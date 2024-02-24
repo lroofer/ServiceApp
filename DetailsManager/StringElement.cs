@@ -11,14 +11,14 @@ public class StringElement: IOption
     public bool IsExpandable() => false;
 
     public bool IsMutable() => _isMutable;
-    public string GetValue { get; private set; }
+    public string Value { get; private set; }
 
     public string GetTag() => _tag;
 
     public void Expand(IDisplayable @object)
     {
         Console.Clear();
-        var oldValue = GetValue;
+        var oldValue = Value;
         Header($"Change mutable value {_tag}: {oldValue}");
         while (true)
         {
@@ -30,7 +30,7 @@ public class StringElement: IOption
                 continue;
             }
 
-            GetValue = tr;
+            Value = tr;
             try
             {
                 @object.SetOption(this);
@@ -39,7 +39,7 @@ public class StringElement: IOption
             catch (Exception e)
             {
                 Warning(e.Message);
-                GetValue = oldValue;
+                Value = oldValue;
             }
         }
     }
@@ -47,10 +47,10 @@ public class StringElement: IOption
     public StringElement(string tag, string value, bool isMutable)
     {
         _tag = tag;
-        GetValue = value;
+        Value = value;
         _isMutable = isMutable;
     }
     
-    public override string ToString() => $"{_tag}: {GetValue}";
+    public override string ToString() => $"{_tag}: {Value}";
 
 }

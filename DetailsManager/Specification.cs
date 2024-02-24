@@ -88,8 +88,17 @@ public class Specification: IDisplayable
     {
         switch (val.GetTag())
         {
-            
+            case "specName":
+                SpecName = (val as StringElement)?.Value ?? throw new InvalidOperationException();
+                break;
+            case "specPrice":
+                SpecPrice = (val as DoubleElement)?.Value ?? throw new InvalidOperationException();
+                break;
+            case "isCustom":
+                IsCustom = (val as BoolElement)?.Value ?? throw new InvalidOperationException();
+                break;
+            default:
+                throw new ArgumentException("The object wasn't found");
         }
-        throw new NotImplementedException();
     }
 }
