@@ -1,27 +1,19 @@
 using DetailsManager;
 
-namespace ServiceApp;
-
 using static DetailsManager.Markup;
 
-public class Menu: View<string>
+namespace ServiceApp;
+
+public class ObjectView: View<IOption>
 {
-    private const int OptionLength = 60;
-    
-    public Menu(string[] options, string prompt, int selectedOption = 0) : base(options.ToList(), prompt)
+    private IDisplayable _object;
+
+    public ObjectView(IDisplayable obj, string objectName): base(obj.GetOptions(), $"Manage {objectName} object")
     {
-        if (options.Any(option => option.Contains('\n') || option.Length > OptionLength))
-        {
-            throw new ArgumentException("Options must be shorter");
-        }
+        _object = obj;
     }
 
-    protected override void ButtonsView()
-    {
-        
-    }
-
-    public int Run()
+    public void Run()
     {
         Init();
         ConsoleKey key;
@@ -36,10 +28,15 @@ public class Menu: View<string>
                 case ConsoleKey.DownArrow when SelectedOption != Options.Count - 1:
                     Down();
                     break;
+                case ConsoleKey.Enter:
+                    Console.ResetColor();
+                    if (!Options[SelectedOption].IsMutable()) break;
+                    Options[SelectedOption].Expand(_object);
+                    Init();
+                    break;
             }
-        } while (key != ConsoleKey.Enter);
+        } while (key != ConsoleKey.X);
         Console.ResetColor();
         Console.Clear();
-        return SelectedOption;
     }
 }

@@ -1,5 +1,7 @@
 namespace DetailsManager;
 
+using static Markup;
+
 public class IntElement: IOption
 {
     private readonly string _tag;
@@ -7,12 +9,10 @@ public class IntElement: IOption
     public IntElement(string tag, int value)
     {
         _tag = tag;
-        GetValue = value;
+        Value = value;
     }
 
-    public int GetValue { get; private set; }
-    
-    public bool IsExpandable() => false;
+    public int Value { get; private set; }
 
     public bool IsMutable() => true;
 
@@ -24,12 +24,43 @@ public class IntElement: IOption
             throw new ArgumentException("Value must be int.");
         }
 
-        GetValue = nVal;
+        Value = nVal;
     }
 
     public string GetTag() => _tag;
-    
-    public void Expand() => throw new InvalidOperationException();
 
-    public override string ToString() => $"{_tag}: {GetValue}";
+    public void Expand(IDisplayable @object)
+    {
+        Console.Clear();
+        var oldValue = Value;
+        Header($"Change mutable value {_tag}: {oldValue}");
+        while (true)
+        {
+            Console.Write("New value (int): ");
+            var value = Console.ReadLine();
+            if (value == null)
+            {
+                Warning("Input was interrupted by another process. Try again: ");
+                continue;
+            }
+            if (!int.TryParse(value, out var nVal))
+            {
+                Warning("Value must be int.");
+                continue;
+            }
+
+            Value = nVal;
+            try
+            {
+                @object.SetOption(this);
+                break;
+            }
+            catch (Exception e)
+            {
+                Warning(e.Message);
+                Value = oldValue;
+            }
+        } 
+    }
+    public override string ToString() => $"{_tag}: {Value}";
 }

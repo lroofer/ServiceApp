@@ -25,7 +25,7 @@ public class BoolElement: IOption
     public override string ToString()
         => $"{_tag}: {(_value ? "V": "X")}";
 
-    public void Expand()
+    public void Expand(IDisplayable @object)
     {
         throw new NotImplementedException();
     }

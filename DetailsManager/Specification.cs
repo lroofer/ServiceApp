@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace DetailsManager;
 
-public class Specification
+public class Specification: IDisplayable
 {
     private string _specName;
     private double _specPrice;
@@ -74,5 +74,22 @@ public class Specification
             TimeReached = DateTime.Now
         };
         Updated?.Invoke(this, e);
+    }
+
+    public List<IOption> GetOptions()
+        => new()
+        {
+            new StringElement("specName", SpecName, true),
+            new DoubleElement("specPrice", SpecPrice, true),
+            new BoolElement("isCustom", IsCustom)
+        };
+
+    public void SetOption(IOption val)
+    {
+        switch (val.GetTag())
+        {
+            
+        }
+        throw new NotImplementedException();
     }
 }
