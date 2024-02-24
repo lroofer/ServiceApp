@@ -33,6 +33,12 @@ public class AutoSaver
         }
     }
 
+    public void WriteFile(string path)
+    {
+        var jsonString = JsonSerializer.Serialize(Manager.Widgets);
+        File.WriteAllText(path, jsonString);
+    }
+    
     public AutoSaver()
     {
         _lastApplied = DateTime.Now;

@@ -11,8 +11,8 @@ public class Specification : IDisplayable
     private string _specName;
     private double _specPrice;
     private bool _isCustom;
-
-    public Specification(string specName, double specPrice, bool isCustom)
+    
+    public Specification(string specName = "null", double specPrice = 0, bool isCustom = false)
     {
         _specName = specName;
         _specPrice = specPrice;

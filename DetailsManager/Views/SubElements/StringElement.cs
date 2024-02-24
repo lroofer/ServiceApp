@@ -13,7 +13,7 @@ public class StringElement : IOption
 
     private readonly string _tag;
 
-    public StringElement(string tag, string value, bool isMutable)
+    public StringElement(string tag = "", string value = "", bool isMutable = false)
     {
         _tag = tag;
         Value = value;
@@ -29,6 +29,7 @@ public class StringElement : IOption
 
     public void Expand(IDisplayable @object)
     {
+        Console.CursorVisible = true;
         Console.Clear();
         var oldValue = Value;
         Header($"Change mutable value {_tag}: {oldValue}");
@@ -54,5 +55,6 @@ public class StringElement : IOption
                 Value = oldValue;
             }
         }
+        Console.CursorVisible = false;
     }
 }

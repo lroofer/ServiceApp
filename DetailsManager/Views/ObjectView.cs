@@ -1,3 +1,4 @@
+using DetailsManager.Objects;
 using DetailsManager.Protocols;
 
 namespace DetailsManager.Views;
@@ -11,7 +12,7 @@ public class ObjectView : View<IOption>
 {
     private readonly IDisplayable _object;
 
-    public ObjectView(IDisplayable obj, string objectName) : base(obj.GetOptions(), $"Manage {objectName} object")
+    public ObjectView(IDisplayable obj = null!, string objectName = "specification") : base(obj.GetOptions(), $"Manage {objectName} object")
     {
         _object = obj;
     }

@@ -16,6 +16,10 @@ public class ArrayElement : View<Specification>, IOption
         _tag = tag;
     }
 
+    public ArrayElement() : base(new List<Specification>(), "")
+    {
+        _tag = "";
+    }
     public bool IsMutable()
         => true;
 

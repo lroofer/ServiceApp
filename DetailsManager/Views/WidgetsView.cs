@@ -44,6 +44,21 @@ public class WidgetsView : View<Widget>
                     Options = Manager.Widgets ?? new List<Widget>();
                     Init();
                     break;
+                case ConsoleKey.E:
+                    Console.ResetColor();
+                    try
+                    {
+                        Export();
+                    }
+                    catch (Exception e)
+                    {
+                        Console.Clear();
+                        Warning($"There's been an error while exporting.\n{e.Message}\n Press enter to try again!");
+                        Console.ReadLine();
+                    }
+
+                    Init();
+                    break;
                 case ConsoleKey.Enter:
                     Console.ResetColor();
                     try
@@ -75,8 +90,33 @@ public class WidgetsView : View<Widget>
         Success(" - Expand || ", false);
         Formula("S");
         Success(" - Sort || ", false);
+        Formula("E");
+        Success("- Export ||", false);
         Formula("Q");
         Success(" - Exit ", false);
+    }
+
+    /// <summary>
+    /// Exports file
+    /// </summary>
+    private static void Export()
+    {
+        Console.Clear();
+        Header($"Ready to export file, choose path: (default) {Manager.PathFile}");
+        Console.CursorVisible = true;
+        var name = Console.ReadLine() ?? Manager.PathFile;
+        if (name is "") name = Manager.PathFile;
+        try
+        {
+            Manager.AutoSaver?.WriteFile(name ?? "");
+            Success($"Export was succeed: {name}. Press enter");
+        }
+        catch (Exception e)
+        {
+            Warning($"There's been a error with you file. \n{e.Message} \nPress enter to return.");
+        }
+        Console.ReadLine();
+        Console.CursorVisible = false;
     }
 
     /// <summary>

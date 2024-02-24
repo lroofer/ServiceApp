@@ -11,7 +11,7 @@ public class BoolElement : IOption
 {
     private readonly string _tag;
 
-    public BoolElement(string tag, bool value)
+    public BoolElement(string tag = "", bool value = false)
     {
         _tag = tag;
         Value = value;
@@ -39,6 +39,7 @@ public class BoolElement : IOption
     public void Expand(IDisplayable @object)
     {
         Console.Clear();
+        Console.CursorVisible = true;
         var oldValue = Value;
         Header($"Change mutable value {_tag}: {oldValue}");
         while (true)
@@ -70,5 +71,6 @@ public class BoolElement : IOption
                 Value = oldValue;
             }
         }
+        Console.CursorVisible = false;
     }
 }

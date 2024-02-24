@@ -13,8 +13,8 @@ internal static class Program
     {
         var menu = new Menu(new []
         {
-            "Enter an absolute path to the file [recommended]",
-            "Use FileManager to select a file"
+            "Enter an absolute path to the file [recommended]"
+            //"Use FileManager to select a file"
         }, "[DetailsManager]");
         return menu.Run();
     }

@@ -12,7 +12,7 @@ public class DoubleElement : IOption
     private readonly bool _isMutable;
     private readonly string _tag;
 
-    public DoubleElement(string tag, double value, bool isMutable)
+    public DoubleElement(string tag = "", double value = 0, bool isMutable = false)
     {
         _tag = tag;
         _isMutable = isMutable;
@@ -38,6 +38,7 @@ public class DoubleElement : IOption
     /// <param name="object">Object to sync with.</param>
     public void Expand(IDisplayable @object)
     {
+        Console.CursorVisible = true;
         Console.Clear();
         var oldValue = Value;
         Header($"Change mutable value {_tag}: {oldValue}");
@@ -69,5 +70,6 @@ public class DoubleElement : IOption
                 Value = oldValue;
             }
         }
+        Console.CursorVisible = false;
     }
 }

@@ -7,7 +7,7 @@ public class Menu: View<string>
 {
     private const int OptionLength = 60;
     
-    public Menu(string[] options, string prompt, int selectedOption = 0) : base(options.ToList(), prompt)
+    public Menu(string[] options = null!, string prompt = "", int selectedOption = 0) : base(options.ToList(), prompt)
     {
         if (options.Any(option => option.Contains('\n') || option.Length > OptionLength))
         {

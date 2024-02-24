@@ -11,7 +11,7 @@ public class IntElement : IOption
 {
     private readonly string _tag;
 
-    public IntElement(string tag, int value)
+    public IntElement(string tag = "", int value = 0)
     {
         _tag = tag;
         Value = value;
@@ -36,6 +36,7 @@ public class IntElement : IOption
     public void Expand(IDisplayable @object)
     {
         Console.Clear();
+        Console.CursorVisible = true;
         var oldValue = Value;
         Header($"Change mutable value {_tag}: {oldValue}");
         while (true)
@@ -66,5 +67,6 @@ public class IntElement : IOption
                 Value = oldValue;
             }
         }
+        Console.CursorVisible = false;
     }
 }

@@ -22,8 +22,8 @@ public class Widget : IDisplayable
 
     public static event EventHandler<UpdateArgs>? Updated;
 
-    public Widget(string widgetId, string name, int quantity, double price, bool isAvailable, string manufactureDate,
-        List<Specification> specifications)
+    public Widget(string widgetId = "", string name = "", int quantity = 0, double price = 0, bool isAvailable = false, string manufactureDate = "",
+        List<Specification> specifications = null!)
     {
         WidgetId = widgetId;
         _name = name;
@@ -148,19 +148,6 @@ public class Widget : IDisplayable
                 throw new ArgumentException($"<Seconds> value doesn't meet the format {DtfFormat}");
             if ("" + value[4] + value[7] + value[10] + value[13] + value[16] != "--T::")
                 throw new ArgumentException($"Separators don't meet the format {DtfFormat}");
-            if (value.Length > DtfFormat.Length - 4)
-            {
-                var ok = value[18] == '.';
-                for (var i = 19; i < value.Length; ++i)
-                {
-                    if (char.IsDigit(value[i])) continue;
-                    ok = false;
-                    break;
-                }
-
-                if (!ok) throw new ArgumentException($"<Milliseconds> value doesn't meet the format {DtfFormat}");
-            }
-
             try
             {
                 _ = new DateTime(year, month, day, hour, minute, seconds);
