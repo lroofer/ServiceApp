@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.Json;
 
 namespace DetailsManager;
@@ -10,9 +11,16 @@ public class AutoSaver
     {
         var diff = (e.TimeReached - _lastApplied).TotalSeconds;
         if (!(diff >= 15)) return;
-        await using var createStream = File.Create(Manager.TempFileName ?? "data_tmp.json");
-        await JsonSerializer.SerializeAsync(createStream, Manager.Widgets);
-        _lastApplied = e.TimeReached;
+        try
+        {
+            await using var createStream = File.Create(Manager.TempFileName ?? "data_tmp.json");
+            await JsonSerializer.SerializeAsync(createStream, Manager.Widgets);
+            _lastApplied = e.TimeReached;
+        }
+        catch (Exception exception)
+        {
+            Debug.WriteLine($"Unable to write a file {exception.Message}");
+        }
     }
     public AutoSaver()
     {

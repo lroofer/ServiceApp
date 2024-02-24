@@ -128,6 +128,10 @@ public class Widget : IDisplayable
         _isAvailable = isAvailable;
         _manufactureDate = manufactureDate;
         _specifications = specifications;
+        foreach (var u in _specifications)
+        {
+            u.PriceUpdated += PriceUpdate;
+        }
     }
 
     public void AddSpecification(Specification specification)

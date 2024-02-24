@@ -32,6 +32,7 @@ public class ObjectView: View<IOption>
                     Console.ResetColor();
                     if (!Options[SelectedOption].IsMutable()) break;
                     Options[SelectedOption].Expand(_object);
+                    Options = _object.GetOptions();
                     Init();
                     break;
             }

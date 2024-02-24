@@ -6,7 +6,7 @@ public abstract class View<T>
 {
     protected int SelectedOption;
     private readonly int[] _optionLocations;
-    protected readonly List<T> Options;
+    protected List<T> Options;
     private readonly string _prompt;
     
     protected View(List<T> options, string prompt)

@@ -101,4 +101,7 @@ public class Specification: IDisplayable
                 throw new ArgumentException("The object wasn't found");
         }
     }
+
+    public override string ToString()
+        => $"{SpecName}: {Math.Round(SpecPrice, 2)}, isCustom: {(IsCustom ? "true" : "false")}";
 }

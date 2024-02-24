@@ -54,6 +54,10 @@ internal static class Program
         Console.CursorVisible = false;
         do
         {
+            Console.Clear();
+            Header("[To ensure great performance and correct displaying of data please EXPAND your terminal window]");
+            Success("By pressing enter you admit that window size won't be changed by yourself");
+            Console.ReadLine();
             var value = SelectMethodMenu();
             if (value == 0)
             {
