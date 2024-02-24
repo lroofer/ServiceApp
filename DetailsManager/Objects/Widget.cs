@@ -1,24 +1,85 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using DetailsManager.Arguments;
+using DetailsManager.Protocols;
+using DetailsManager.Views.SubElements;
 
-namespace DetailsManager;
+namespace DetailsManager.Objects;
 
 public class Widget : IDisplayable
 {
     private const string DtfFormat = "YYYY-MM-DDThh:mm:ss.mls";
-    private string _name;
-    private int _quantity;
-    private double _price;
-    private bool _isAvailable;
-    private string _manufactureDate;
-    private readonly List<Specification> _specifications;
-
-    public static event EventHandler<UpdateArgs>? Updated;
 
     public static readonly string[] WidgetProperties =
         { "widgetId", "name", "quantity", "price", "isAvailable", "manufactureDate" };
 
-    public override string ToString() => $"{Name} ({Quantity}) -> {Math.Round(Price, 2)}$: {WidgetId}";
+    private readonly List<Specification> _specifications;
+    private string _name;
+    private string _manufactureDate;
+    private int _quantity;
+    private double _price;
+    private bool _isAvailable;
+
+    public static event EventHandler<UpdateArgs>? Updated;
+
+    public Widget(string widgetId, string name, int quantity, double price, bool isAvailable, string manufactureDate,
+        List<Specification> specifications)
+    {
+        WidgetId = widgetId;
+        _name = name;
+        _quantity = quantity;
+        _price = price;
+        _isAvailable = isAvailable;
+        _manufactureDate = manufactureDate;
+        _specifications = specifications;
+        foreach (var u in _specifications)
+        {
+            u.PriceUpdated += PriceUpdate;
+        }
+    }
+
+    /// <summary>
+    /// Creates a snapshot of the current object state.
+    /// </summary>
+    /// <returns>Viewable data.</returns>
+    public List<IOption> GetOptions()
+        => new()
+        {
+            new StringElement("widgetId", WidgetId, false),
+            new StringElement("name", Name, true),
+            new IntElement("quantity", Quantity),
+            new DoubleElement("price", Price, false),
+            new BoolElement("isAvailable", IsAvailable),
+            new StringElement("manufactureDate", ManufactureDate, true),
+            new ArrayElement("specifications", in _specifications)
+        };
+
+    /// <summary>
+    /// Attempts to apply changes in the view to the object.
+    /// </summary>
+    /// <param name="val">Viewable object.</param>
+    /// <exception cref="InvalidOperationException">Tag doesn't correspond the object.</exception>
+    /// <exception cref="ArgumentException">Tag doesn't exist.</exception>
+    public void SetOption(IOption val)
+    {
+        switch (val.GetTag())
+        {
+            case "name":
+                Name = (val as StringElement)?.Value ?? throw new InvalidOperationException();
+                break;
+            case "quantity":
+                Quantity = (val as IntElement)?.Value ?? throw new InvalidOperationException();
+                break;
+            case "isAvailable":
+                IsAvailable = (val as BoolElement)?.Value ?? throw new InvalidOperationException();
+                break;
+            case "manufactureDate":
+                ManufactureDate = (val as StringElement)?.Value ?? throw new InvalidOperationException();
+                break;
+            default:
+                throw new ArgumentException("The object wasn't found");
+        }
+    }
 
     [JsonPropertyName("widgetId")] public string WidgetId { get; }
 
@@ -116,24 +177,22 @@ public class Widget : IDisplayable
 
     [JsonPropertyName("specifications")] public List<Specification> Specifications => _specifications;
 
+    /// <summary>
+    /// Creates a snippet of the object.
+    /// </summary>
+    /// <returns>Presented info</returns>
+    public override string ToString() => $"{Name} ({Quantity}) -> {Math.Round(Price, 2)}$: {WidgetId}";
+
+    /// <summary>
+    /// Converts specification object to JSON-formatted string.
+    /// </summary>
+    /// <returns>JSON-formatted representation of the object.</returns>
     public string ToJson() => JsonSerializer.Serialize(this);
 
-    public Widget(string widgetId, string name, int quantity, double price, bool isAvailable, string manufactureDate,
-        List<Specification> specifications)
-    {
-        WidgetId = widgetId;
-        _name = name;
-        _quantity = quantity;
-        _price = price;
-        _isAvailable = isAvailable;
-        _manufactureDate = manufactureDate;
-        _specifications = specifications;
-        foreach (var u in _specifications)
-        {
-            u.PriceUpdated += PriceUpdate;
-        }
-    }
-
+    /// <summary>
+    /// Manually add a new specification to the list.
+    /// </summary>
+    /// <param name="specification">New specification to add.</param>
     public void AddSpecification(Specification specification)
     {
         _specifications.Add(specification);
@@ -141,6 +200,11 @@ public class Widget : IDisplayable
         specification.PriceUpdated += PriceUpdate;
     }
 
+    /// <summary>
+    /// Manually remove specification from the list.
+    /// </summary>
+    /// <param name="index">Index of the element.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Index was out of range.</exception>
     public void RemoveSpecification(int index)
     {
         if (index >= _specifications.Count)
@@ -150,12 +214,9 @@ public class Widget : IDisplayable
         _specifications.RemoveAt(index);
     }
 
-    void PriceUpdate(object? sender, PriceUpdateArgs e)
-    {
-        _price += e.Delta ?? 0;
-        OnUpdated();
-    }
-
+    /// <summary>
+    /// Invokes all the subscribers when something has been changed.
+    /// </summary>
     protected virtual void OnUpdated()
     {
         var e = new UpdateArgs
@@ -165,38 +226,14 @@ public class Widget : IDisplayable
         Updated?.Invoke(this, e);
     }
 
-    public List<IOption> GetOptions()
-        => new()
-        {
-            new StringElement("widgetId", WidgetId, false),
-            new StringElement("name", Name, true),
-            new IntElement("quantity", Quantity),
-            new DoubleElement("price", Price, false),
-            new BoolElement("isAvailable", IsAvailable),
-            new StringElement("manufactureDate", ManufactureDate, true),
-            new ArrayElement("specifications", in _specifications)
-        };
-    
-    
-
-    public void SetOption(IOption val)
+    /// <summary>
+    /// Private method changes the price value after getting new event notification.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e">Parameters of the change.</param>
+    private void PriceUpdate(object? sender, PriceUpdateArgs e)
     {
-        switch (val.GetTag())
-        {
-            case "name":
-                Name = (val as StringElement)?.Value ?? throw new InvalidOperationException();
-                break;
-            case "quantity":
-                Quantity = (val as IntElement)?.Value ?? throw new InvalidOperationException();
-                break;
-            case "isAvailable":
-                IsAvailable = (val as BoolElement)?.Value ?? throw new InvalidOperationException();
-                break;
-            case "manufactureDate":
-                ManufactureDate = (val as StringElement)?.Value ?? throw new InvalidOperationException();
-                break;
-            default:
-                throw new ArgumentException("The object wasn't found");
-        }
+        _price += e.Delta ?? 0;
+        OnUpdated();
     }
 }

@@ -1,12 +1,22 @@
 using System.Diagnostics;
 using System.Text.Json;
+using DetailsManager.Arguments;
+using DetailsManager.Objects;
 
 namespace DetailsManager;
 
+/// <summary>
+/// Auto-saving daemon, that write every 15 seconds data to the temporary file.
+/// </summary>
 public class AutoSaver
 {
     private DateTime _lastApplied;
 
+    /// <summary>
+    /// The method asynchronously updates the temporary file.  
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private async void OnUpdate(object? sender, UpdateArgs e)
     {
         var diff = (e.TimeReached - _lastApplied).TotalSeconds;
@@ -22,6 +32,7 @@ public class AutoSaver
             Debug.WriteLine($"Unable to write a file {exception.Message}");
         }
     }
+
     public AutoSaver()
     {
         _lastApplied = DateTime.Now;

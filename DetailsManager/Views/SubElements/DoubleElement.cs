@@ -1,11 +1,16 @@
-namespace DetailsManager;
+using DetailsManager.Protocols;
+
+namespace DetailsManager.Views.SubElements;
 
 using static Markup;
 
-public class DoubleElement: IOption
+/// <summary>
+/// The representation of double property.
+/// </summary>
+public class DoubleElement : IOption
 {
-    private bool _isMutable;
-    private string _tag;
+    private readonly bool _isMutable;
+    private readonly string _tag;
 
     public DoubleElement(string tag, double value, bool isMutable)
     {
@@ -15,12 +20,22 @@ public class DoubleElement: IOption
     }
 
     public double Value { get; private set; }
-    
+
     public bool IsMutable() => _isMutable;
 
     public string GetTag()
         => _tag;
 
+    /// <summary>
+    /// Shorten representation of the property.
+    /// </summary>
+    /// <returns></returns>
+    public override string ToString() => $"{_tag}: {Math.Round(Value, 2)}";
+
+    /// <summary>
+    /// Simple representation of the double changing logic.
+    /// </summary>
+    /// <param name="object">Object to sync with.</param>
     public void Expand(IDisplayable @object)
     {
         Console.Clear();
@@ -35,6 +50,7 @@ public class DoubleElement: IOption
                 Warning("Input was interrupted by another process. Try again: ");
                 continue;
             }
+
             if (!double.TryParse(value, out var nVal))
             {
                 Warning("Value must be double.");
@@ -52,9 +68,6 @@ public class DoubleElement: IOption
                 Warning(e.Message);
                 Value = oldValue;
             }
-        } 
+        }
     }
-    
-    public override string ToString() => $"{_tag}: {Math.Round(Value, 2)}";
-
 }

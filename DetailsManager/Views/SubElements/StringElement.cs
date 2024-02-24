@@ -1,27 +1,31 @@
-namespace DetailsManager;
+using DetailsManager.Protocols;
+
+namespace DetailsManager.Views.SubElements;
 
 using static Markup;
 
-public class BoolElement: IOption
+/// <summary>
+/// The representation of the string property.
+/// </summary>
+public class StringElement : IOption
 {
-    private string _tag;
+    private readonly bool _isMutable;
 
-    public BoolElement(string tag, bool value)
+    private readonly string _tag;
+
+    public StringElement(string tag, string value, bool isMutable)
     {
         _tag = tag;
         Value = value;
+        _isMutable = isMutable;
     }
-    
-    public bool Value { get; private set; }
-    
-    public bool IsMutable()
-        => true;
 
-    public string GetTag()
-        => _tag;
+    public bool IsMutable() => _isMutable;
+    public string Value { get; private set; }
 
-    public override string ToString()
-        => $"{_tag}: {(Value ? "V": "X")}";
+    public string GetTag() => _tag;
+
+    public override string ToString() => $"{_tag}: {Value}";
 
     public void Expand(IDisplayable @object)
     {
@@ -30,7 +34,7 @@ public class BoolElement: IOption
         Header($"Change mutable value {_tag}: {oldValue}");
         while (true)
         {
-            Console.Write("New value(true/false): ");
+            Console.Write("New value: ");
             var tr = Console.ReadLine();
             if (tr == null)
             {
@@ -38,14 +42,7 @@ public class BoolElement: IOption
                 continue;
             }
 
-            tr = tr.ToLower();
-            if (tr is not ("true" or "false"))
-            {
-                Warning("Wrong value: try true/false");
-                continue;
-            }
-
-            Value = tr == "true";
+            Value = tr;
             try
             {
                 @object.SetOption(this);

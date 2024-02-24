@@ -1,9 +1,8 @@
-using DetailsManager;
+namespace DetailsManager.Views;
 
-namespace ServiceApp;
-
-using static DetailsManager.Markup;
-
+/// <summary>
+/// The view for the option selection.
+/// </summary>
 public class Menu: View<string>
 {
     private const int OptionLength = 60;
@@ -14,11 +13,6 @@ public class Menu: View<string>
         {
             throw new ArgumentException("Options must be shorter");
         }
-    }
-
-    protected override void ButtonsView()
-    {
-        
     }
 
     public int Run()
@@ -42,4 +36,13 @@ public class Menu: View<string>
         Console.Clear();
         return SelectedOption;
     }
+    
+    /// <summary>
+    /// Disable buttonsView entirely.
+    /// </summary>
+    protected override void ButtonsView()
+    {
+        
+    }
+    
 }

@@ -1,8 +1,13 @@
-namespace DetailsManager;
+using DetailsManager.Protocols;
+
+namespace DetailsManager.Views.SubElements;
 
 using static Markup;
 
-public class IntElement: IOption
+/// <summary>
+/// The representation of integer property.
+/// </summary>
+public class IntElement : IOption
 {
     private readonly string _tag;
 
@@ -16,19 +21,18 @@ public class IntElement: IOption
 
     public bool IsMutable() => true;
 
-    public void SetValue(string value)
-    {
-        if (value.Length > 10) throw new ArgumentException("Must be shorter.");
-        if (!int.TryParse(value, out var nVal))
-        {
-            throw new ArgumentException("Value must be int.");
-        }
-
-        Value = nVal;
-    }
-
     public string GetTag() => _tag;
 
+    /// <summary>
+    /// Shorten representation of the property.
+    /// </summary>
+    /// <returns></returns>
+    public override string ToString() => $"{_tag}: {Value}";
+
+    /// <summary>
+    /// Simple representation of integer changing logic.
+    /// </summary>
+    /// <param name="object">Object to sync with.</param>
     public void Expand(IDisplayable @object)
     {
         Console.Clear();
@@ -43,6 +47,7 @@ public class IntElement: IOption
                 Warning("Input was interrupted by another process. Try again: ");
                 continue;
             }
+
             if (!int.TryParse(value, out var nVal))
             {
                 Warning("Value must be int.");
@@ -60,7 +65,6 @@ public class IntElement: IOption
                 Warning(e.Message);
                 Value = oldValue;
             }
-        } 
+        }
     }
-    public override string ToString() => $"{_tag}: {Value}";
 }

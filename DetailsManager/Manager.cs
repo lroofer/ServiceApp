@@ -1,7 +1,12 @@
+using DetailsManager.Objects;
+
 namespace DetailsManager;
 
 using static Markup;
 
+/// <summary>
+/// Process and stores data.
+/// </summary>
 public static class Manager
 {
     public static List<Widget>? Widgets;
@@ -10,6 +15,7 @@ public static class Manager
     public static string? TempFileName;
 
     public delegate int CompareTo(Widget a, Widget b);
+
     public static void Sort(CompareTo ct)
     {
         Console.Clear();
