@@ -56,7 +56,7 @@ public class Specification
         _isCustom = isCustom;
     }
 
-    public string ToJSON() => JsonSerializer.Serialize(this);
+    public string ToJson() => JsonSerializer.Serialize(this);
     
     protected virtual void OnPriceUpdated(double delta)
     {

@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace DetailsManager;
 
-public class Widget
+public class Widget : IDisplayable
 {
     private const string DtfFormat = "YYYY-MM-DDThh:mm:ss.mls";
     private string _name;
@@ -14,12 +14,14 @@ public class Widget
     private readonly List<Specification> _specifications;
 
     public static event EventHandler<UpdateArgs>? Updated;
-    public static readonly string[] WidgetProperties = { "widgetId", "name", "quantity", "price", "isAvailable", "manufactureDate" };
+
+    public static readonly string[] WidgetProperties =
+        { "widgetId", "name", "quantity", "price", "isAvailable", "manufactureDate" };
+
     public override string ToString() => $"{Name} ({Quantity}) -> {Math.Round(Price, 2)}$: {WidgetId}";
-    
-    [JsonPropertyName("widgetId")]
-    public string WidgetId { get; }
-    
+
+    [JsonPropertyName("widgetId")] public string WidgetId { get; }
+
     [JsonPropertyName("name")]
     public string Name
     {
@@ -49,9 +51,8 @@ public class Widget
             else throw new ArgumentException("Quantity can't be negative.");
         }
     }
-    
-    [JsonPropertyName("price")]
-    public double Price => _price;
+
+    [JsonPropertyName("price")] public double Price => _price;
 
     [JsonPropertyName("isAvailable")]
     public bool IsAvailable
@@ -70,7 +71,8 @@ public class Widget
         get => _manufactureDate;
         set
         {
-            if (value.Length < DtfFormat.Length - 4) throw new ArgumentException($"Too short to meet the format: {DtfFormat}");
+            if (value.Length < DtfFormat.Length - 4)
+                throw new ArgumentException($"Too short to meet the format: {DtfFormat}");
             if (!int.TryParse("" + value[0] + value[1] + value[2] + value[3], out int year))
                 throw new ArgumentException($"<Year> value doesn't meet the format {DtfFormat}");
             if (!int.TryParse("" + value[5] + value[6], out int month))
@@ -94,6 +96,7 @@ public class Widget
                     ok = false;
                     break;
                 }
+
                 if (!ok) throw new ArgumentException($"<Milliseconds> value doesn't meet the format {DtfFormat}");
             }
 
@@ -108,15 +111,15 @@ public class Widget
 
             _manufactureDate = value;
             OnUpdated();
-        }   
+        }
     }
 
-    [JsonPropertyName("specifications")]
-    public List<Specification> Specifications => _specifications;
+    [JsonPropertyName("specifications")] public List<Specification> Specifications => _specifications;
 
     public string ToJson() => JsonSerializer.Serialize(this);
-    
-    public Widget(string widgetId, string name, int quantity, double price, bool isAvailable, string manufactureDate, List<Specification> specifications)
+
+    public Widget(string widgetId, string name, int quantity, double price, bool isAvailable, string manufactureDate,
+        List<Specification> specifications)
     {
         WidgetId = widgetId;
         _name = name;
@@ -142,11 +145,13 @@ public class Widget
         _specifications[index].PriceUpdated -= PriceUpdate;
         _specifications.RemoveAt(index);
     }
+
     void PriceUpdate(object? sender, PriceUpdateArgs e)
     {
         _price += e.Delta ?? 0;
         OnUpdated();
     }
+
     protected virtual void OnUpdated()
     {
         var e = new UpdateArgs
@@ -155,5 +160,28 @@ public class Widget
         };
         Updated?.Invoke(this, e);
     }
+
+    public List<IOption> GetOptions()
+        => new()
+        {
+            new StringElement("widgetId", WidgetId, false),
+            new StringElement("name", Name, true),
+            new IntElement("quantity", Quantity),
+            new DoubleElement("price", Price, false),
+            new BoolElement("isAvailable", IsAvailable),
+            new StringElement("manufactureDate", ManufactureDate, true),
+            new ArrayElement("specifications", in _specifications)
+        };
     
+    
+
+    public void SetOption(IOption val)
+    {
+        switch (val.GetTag())
+        {
+            
+        }
+
+        throw new NotImplementedException();
+    }
 }

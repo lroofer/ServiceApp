@@ -7,13 +7,7 @@ using static Markup;
 public class WidgetsView
 {
     private int _selectedWidget;
-    private int[] _widgetLocations;
-
-    public WidgetsView()
-    {
-        _selectedWidget = 0;
-        _widgetLocations = new int[Manager.Widgets?.Count ?? 0];
-    }
+    private int[] _widgetLocations = new int[Manager.Widgets?.Count ?? 0];
 
     private void Init(int startPosition = 0)
     {
@@ -153,8 +147,10 @@ public class WidgetsView
                     Init();
                     break;
                 case ConsoleKey.Enter:
-                    var widgetView = new WidgetView();
-                    
+                    Console.ResetColor();
+                    var widgetView = new ObjectView(Manager.Widgets?[_selectedWidget] ?? throw new IndexOutOfRangeException() , "Widget");
+                    widgetView.Run();
+                    Init();
                     break;
             }
         } while (key != ConsoleKey.Q);
